@@ -24,3 +24,12 @@ session = {
     "session_id": str(uuid.uuid4())
 }
 
+# Initialize Langsmith client and tracer
+client = Client()
+tracer = LangChainTracer(project_name=os.getenv("LANGCHAIN_PROJECT"))
+
+# Setup callback manager
+callback_manager = CallbackManager([StreamingStdOutCallbackHandler(), tracer])
+
+# Dictionary untuk menyimpan memory untuk setiap session
+conversation_memories: Dict[str, ConversationBufferMemory] = {}
