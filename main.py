@@ -18,3 +18,9 @@ import json
 from dotenv import load_dotenv
 
 load_dotenv()
+
+app = FastAPI()
+session = {
+    "session_id": str(uuid.uuid4())
+}
+
