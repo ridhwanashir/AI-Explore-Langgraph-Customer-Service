@@ -54,3 +54,11 @@ prompt = ChatPromptTemplate.from_messages([
 # output_parser = StrOutputParser()
 # chain = prompt | llm | output_parser
 
+def get_or_create_memory(session_id: str) -> ConversationBufferMemory:
+    """Get or create memory for a session."""
+    if session_id not in conversation_memories:
+        conversation_memories[session_id] = ConversationBufferMemory(
+            memory_key="chat_history",
+            input_key="human_input"  # Set input_key to 'human_input' as required
+        )
+    return conversation_memories[session_id]
