@@ -46,3 +46,11 @@ llm = AzureChatOpenAI(
     max_retries = 1,
     # parallel_tool_calls=False,
 )
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant. Please respond to the user's in a funny way."),
+    ("user", "Question: {human_input}"),
+])
+# output_parser = StrOutputParser()
+# chain = prompt | llm | output_parser
+
