@@ -62,3 +62,13 @@ def get_or_create_memory(session_id: str) -> ConversationBufferMemory:
             input_key="human_input"  # Set input_key to 'human_input' as required
         )
     return conversation_memories[session_id]
+
+def create_chain(prompt_template: PromptTemplate, memory: ConversationBufferMemory) -> LLMChain:
+    """Create a LangChain chain with memory."""
+    return LLMChain(
+        llm=llm,
+        prompt=prompt_template,
+        memory=memory,
+        verbose=True,
+        # callback_manager=callback_manager
+    )
