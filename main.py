@@ -33,3 +33,16 @@ callback_manager = CallbackManager([StreamingStdOutCallbackHandler(), tracer])
 
 # Dictionary untuk menyimpan memory untuk setiap session
 conversation_memories: Dict[str, ConversationBufferMemory] = {}
+
+# Setup Langchain Azure OpenAI Client
+llm = AzureChatOpenAI(
+    azure_endpoint = os.environ.get('AZURE_OPENAI_ENDPOINT'),
+    openai_api_key = os.environ.get('AZURE_OPENAI_API_KEY'),
+    openai_api_version = os.environ.get('AZURE_OPENAI_API_VERSION'),
+    deployment_name = os.environ.get('AZURE_OPENAI_DEPLOYMENT'),
+    model_name = 'gpt-4o-mini',
+    temperature = 0.4,
+    max_tokens = 1500,
+    max_retries = 1,
+    # parallel_tool_calls=False,
+)
