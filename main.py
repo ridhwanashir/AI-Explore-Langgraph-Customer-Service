@@ -72,3 +72,27 @@ def create_chain(prompt_template: PromptTemplate, memory: ConversationBufferMemo
         verbose=True,
         # callback_manager=callback_manager
     )
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+@app.post("/chat")
+async def chat(human_input: str):
+    try:
+        # Get session ID or create new one
+        session_id = session.get('session_id', str(uuid.uuid4()))
+        
+        # Get or create memory for this session
+        memory = get_or_create_memory(session_id)
+
+        prompt_template = prompt
+        if not prompt_template:
+            return {"error": "Prompt template could not be loaded"}, 400
+        
+        chain = create_chain(prompt, memory)
+        # input_dict = {"human_input": human_input}
+        response = chain.predict(human_input=human_input, client=client)
+        return {"response": response}
+    except Exception as e: 
+        return {"error": str(e)}, 500
