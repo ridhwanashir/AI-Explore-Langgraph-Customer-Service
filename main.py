@@ -47,11 +47,38 @@ llm = AzureChatOpenAI(
     # parallel_tool_calls=False,
 )
 
+with open("prompt.txt", "r") as f:
+    prompt_text = f.read()
+
+# overview = "You are a helpful assistant. Please respond to the user's in a funny way."
+# start_date = "2022-01-01"
+# end_date = "2022-12-31"
+# document_version = "1.0"
+# product_name = "Product Name"
+# document_owner = "Document Owner"
+# developer = "Developer"
+# stakeholder = "Stakeholder"
+# doc_stage = "Draft"
+# created_date = "2022-01-01"
+
+# prompt_text.format(
+#     overview=overview,
+#     start_date=start_date,
+#     end_date=end_date,
+#     document_version=document_version,
+#     product_name=product_name,
+#     document_owner=document_owner,
+#     developer=developer,
+#     stakeholder=stakeholder,
+#     doc_stage=doc_stage,
+#     created_date=created_date
+# )
+
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful assistant. Please respond to the user's in a funny way."),
-    ("user", "Question: {human_input}"),
+    # ("system", "You are a helpful assistant. Please respond to the user's in a funny way."),
+    ("user", "{prompt_text}"),
 ])
-# output_parser = StrOutputParser()
+output_parser = StrOutputParser()
 # chain = prompt | llm | output_parser
 
 def get_or_create_memory(session_id: str) -> ConversationBufferMemory:
@@ -86,13 +113,26 @@ async def chat(human_input: str):
         # Get or create memory for this session
         memory = get_or_create_memory(session_id)
 
-        prompt_template = prompt
+        prompt_template = prompt_text.format(prompt_text=prompt_text)
         if not prompt_template:
             return {"error": "Prompt template could not be loaded"}, 400
         
         chain = create_chain(prompt, memory)
-        # input_dict = {"human_input": human_input}
-        response = chain.predict(human_input=human_input, client=client)
+        input_dict = {"human_input": human_input}
+        input_dict = {
+            "overview": "You are a helpful assistant. Please respond to the user's in a funny way.",
+            "start_date": "2022-01-01",
+            "end_date": "2022-12-31",
+            "document_versions": "1.0",
+            "product_name": "Product Name",
+            "document_owner": "Document Owner",
+            "developer": "Developer",
+            "stakeholder": "Stakeholder",
+            "doc_stage": "Draft",
+            "created_date": "2022-01-01"
+        }
+
+        response = chain.invoke(input=input_dict, client=client)
         return {"response": response}
     except Exception as e: 
         return {"error": str(e)}, 500
